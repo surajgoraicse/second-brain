@@ -4,6 +4,7 @@ import TagsModel from "../models/tags.model.js";
 import ApiResponse from "../utils/ApiResponse.util.js";
 import { tagValidation } from "../schemas/tag.zod.js";
 import ApiError from "../utils/ApiError.util.js";
+import { beforeEach } from "node:test";
 
 export const createTags = asyncHandler(
 	async (req: Request, res: Response, next: NextFunction) => {
@@ -46,26 +47,26 @@ export const createTags = asyncHandler(
 		}
 		return res
 			.status(200)
-			.json(new ApiResponse(201, true, "tags created successfully" , newDbTags));
+			.json(new ApiResponse(201, true, "tags created successfully", newDbTags));
 	}
 );
 export const deleteTags = asyncHandler(
 	async (req: Request, res: Response, next: NextFunction) => {
-		let tags: string[] = req.body.tags; // ["dev" , "Dsa"]
+		let { tags } = req.body; // ["dev" , "Dsa"]
 		const validate = tagValidation.safeParse(tags);
 		if (!validate.success) {
 			return next(new ApiError("invalid tags", 400, validate.error.format()));
 		}
-
-		
-		
-
+		await TagsModel.deleteMany({ title: { $in: tags } });
+		const dbTags = await TagsModel.find();
+		res
+			.status(200)
+			.json(new ApiResponse(200, true, "tags deleted successfully", dbTags));
 	}
 );
 export const getAllTags = asyncHandler(
 	async (req: Request, res: Response, next: NextFunction) => {
 		const tags = await TagsModel.find();
-		console.log(tags);
 		return res
 			.status(200)
 			.json(new ApiResponse(200, true, "fetched all tags", tags));
