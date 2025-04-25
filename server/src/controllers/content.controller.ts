@@ -18,7 +18,10 @@ export const createContent = asyncHandler(
 		// creating a payload
 		const userId = user._id;
 		const { link, type, title, tags } = req.body;
-		const checkIfTitleExists = await ContentModel.findOne({ title });
+		const checkIfTitleExists = await ContentModel.findOne({
+			title,
+			userId: user._id,
+		});
 		if (checkIfTitleExists) {
 			return next(new ApiError("Title already exists", 400));
 		}
