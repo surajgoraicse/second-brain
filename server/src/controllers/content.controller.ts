@@ -7,6 +7,7 @@ import { contentSchema } from "../schemas/content.zod.js";
 import ContentModel from "../models/content.model.js";
 import { createTagsFn } from "./tags.controller.js";
 import mongoose from "mongoose";
+import { nanoid } from "nanoid";
 
 export const createContent = asyncHandler(
 	async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -15,9 +16,11 @@ export const createContent = asyncHandler(
 			return next(new ApiError("Please login", 401));
 		}
 
-		// creating a payload
 		const userId = user._id;
-		const { link, type, title, tags } = req.body;
+		const { type, title, tags, share, description } = req.body;
+		const link = `http://localhost:8002/v1/brain/` + nanoid(10);
+		console.log("nanoid link : ", link);
+
 		const checkIfTitleExists = await ContentModel.findOne({
 			title,
 			userId: user._id,
@@ -43,13 +46,18 @@ export const createContent = asyncHandler(
 				}
 			}
 		}
+
+		// creating a payload
 		const payload = {
 			link,
 			type,
 			title,
 			tags: tagsObjId,
 			userId,
+			share,
+			description,
 		};
+		console.log("payload : ", payload);
 		const validate = contentSchema.safeParse(payload);
 		if (!validate.success) {
 			return next(
@@ -66,6 +74,8 @@ export const createContent = asyncHandler(
 			title,
 			tags: tagsObjId,
 			userId,
+			share,
+			description,
 		});
 
 		return res

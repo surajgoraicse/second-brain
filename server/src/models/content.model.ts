@@ -8,6 +8,8 @@ export interface IContent extends Document {
 	title: string;
 	tags: ITags[];
 	userId: IUser;
+	share: "public" | "private";
+	description: string;
 }
 
 const contentTypes = ["image", "video", "article", "audio"];
@@ -17,12 +19,22 @@ const contentSchema = new Schema<IContent>(
 			type: String,
 			trim: true,
 		},
+		share: {
+			type: String,
+			enum: ["public", "private"],
+			default: "private",
+			required: true,
+		},
 		type: {
 			type: String,
 			enum: contentTypes,
 			required: true,
 		},
 		title: {
+			type: String,
+			required: true,
+		},
+		description: {
 			type: String,
 			required: true,
 		},
