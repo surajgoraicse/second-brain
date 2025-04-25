@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const connectDb = (uri: string) => {
 	mongoose
-		.connect(uri, { dbName: "node-starter" })
+		.connect(uri, { dbName: "second-brain" })
 		.then((res) => {
 			console.log(
 				`database connected successfully \nhost : ${res.connection.host}  \nport : ${res.connection.port}`
