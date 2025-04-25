@@ -14,7 +14,6 @@ import { AuthenticatedRequest } from "../types/types.js";
 const authUser = asyncHandler(
 	async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		const accessToken = req.cookies.accessToken;
-		console.log("reach herer");
 		if (!accessToken) {
 			return next(new ApiError("Access Token not found , Please login", 404));
 		}
@@ -26,7 +25,6 @@ const authUser = asyncHandler(
 		if (!user) {
 			return next(new ApiError("User not found", 404));
 		}
-		console.log("user found");
 		req.user = user;
 		next();
 	}

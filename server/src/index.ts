@@ -19,12 +19,16 @@ app.use(morgan("dev"));
 // import routers
 import userRouter from "./routers/user.router.js";
 import adminRouter from "./routers/admin.router.js";
+import contentRouter from "./routers/content.router.js"
+import tagsRouter from "./routers/tags.router.js"
 
 
 
 // using routers
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/content", contentRouter);
+app.use("/api/v1/tags" , tagsRouter)
 
 app.get("/", (req, res) => {
 	res.send("this is some data");

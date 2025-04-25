@@ -8,10 +8,13 @@ const tagsSchema = new Schema<ITags>(
 	{
 		title: {
 			type: String,
+			trim: true,
+			lowercase: true,
+			required: true,
 		},
 	},
 	{ timestamps: true }
 );
 
-const TagsModel = model<ITags>("Content", tagsSchema);
+const TagsModel = model<ITags>("Tags", tagsSchema);
 export default TagsModel;

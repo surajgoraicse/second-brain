@@ -9,6 +9,7 @@ import authUser from "../middlewares/userAuth.middleware.js";
 
 const app = Router();
 
+// api/v1/user
 app.post("/register", registerUser);
 app.post("/login", login);
 app.post("/logout", authUser, logout);

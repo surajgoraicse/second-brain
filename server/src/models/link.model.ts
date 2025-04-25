@@ -13,11 +13,12 @@ const linkSchema = new Schema<ILinkSchema>(
 		},
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "User",
+            ref: "User",
+            required : true
 		},
 	},
 	{ timestamps: true }
 );
 
-const LinkModel = model<ILinkSchema>("Content", linkSchema);
+const LinkModel = model<ILinkSchema>("Link", linkSchema);
 export default LinkModel;

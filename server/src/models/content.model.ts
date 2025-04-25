@@ -5,11 +5,12 @@ import { IUser } from "./user.model.js";
 export interface IContent extends Document {
 	link: string;
 	type: string;
-    title: string;
-    tags: ITags;
-    userId:  IUser;
+	title: string;
+	tags: ITags[];
+	userId: IUser;
 }
 
+const contentTypes = ["image", "video", "article", "audio"];
 const contentSchema = new Schema<IContent>(
 	{
 		link: {
@@ -18,7 +19,7 @@ const contentSchema = new Schema<IContent>(
 		},
 		type: {
 			type: String,
-			enum: ["dev", "dsa", "acad"],
+			enum: contentTypes,
 			required: true,
 		},
 		title: {
@@ -26,16 +27,17 @@ const contentSchema = new Schema<IContent>(
 			required: true,
 		},
 		tags: {
-			type: mongoose.Schema.Types.ObjectId,
+			type: [mongoose.Schema.Types.ObjectId],
 			ref: "Tags",
 		},
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
+			required: true,
 		},
 	},
 	{ timestamps: true }
 );
 
 const ContentModel = model<IContent>("Content", contentSchema);
-export default ContentModel
+export default ContentModel;
