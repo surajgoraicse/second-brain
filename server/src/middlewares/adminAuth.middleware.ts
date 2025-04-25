@@ -11,7 +11,7 @@ import { AuthenticatedRequest } from "../types/types.js";
  * check if user exists in db
  * attach the user obj in the req body
  */
-const authUser = asyncHandler(
+const authAdmin = asyncHandler(
 	async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		const accessToken = req.cookies.accessToken;
 		if (!accessToken) {
@@ -33,4 +33,4 @@ const authUser = asyncHandler(
 	}
 );
 
-export default authUser;
+export default authAdmin;

@@ -1,10 +1,58 @@
 import { NextFunction, Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler.util.js";
-import TagsModel from "../models/tags.model.js";
+import TagsModel, { ITags } from "../models/tags.model.js";
 import ApiResponse from "../utils/ApiResponse.util.js";
 import { tagValidation } from "../schemas/tag.zod.js";
 import ApiError from "../utils/ApiError.util.js";
-import { beforeEach } from "node:test";
+
+
+
+export const createTagsFn = async (tags: string[]) => {
+	
+	try {
+
+		/**
+		 * add unique tags to db
+		 * return all tags from db
+		 */
+
+		const validate = tagValidation.safeParse(tags);
+		if (!validate.success) {
+			return null;
+		}
+
+		let dbTags = await TagsModel.find();
+
+		// filter an array of tags which are not present.
+		const filterTags = tags.filter((tag) => {
+			let isAvailable = true;
+			for (let i = 0; i < dbTags.length; i++) {
+				if (dbTags[i].title.toLowerCase() === tag.toLowerCase()) {
+					isAvailable = false;
+					break;
+				}
+			}
+			return isAvailable;
+		});
+
+		// prepare the new tags into required format to insert in db
+		const tagObj = filterTags.map((tag) => {
+			return {
+				title: tag,
+			};
+		});
+
+		// insert in db
+		if (tagObj.length != 0) {
+			const newDbTags = await TagsModel.insertMany(tagObj);
+		}
+		const newDbTags = await TagsModel.find();
+
+		return newDbTags;
+	} catch (error) {
+		return null;
+	}
+};
 
 export const createTags = asyncHandler(
 	async (req: Request, res: Response, next: NextFunction) => {
@@ -20,7 +68,7 @@ export const createTags = asyncHandler(
 		}
 		let dbTags = await TagsModel.find();
 
-		// filter the tags which are present.
+		// filter the tags which are not present.
 		const filterTags = tags.filter((tag) => {
 			let isAvailable = true;
 			for (let i = 0; i < dbTags.length; i++) {
@@ -43,7 +91,6 @@ export const createTags = asyncHandler(
 		let newDbTags;
 		if (tagObj.length != 0) {
 			newDbTags = await TagsModel.insertMany(tagObj);
-			console.log(newDbTags);
 		}
 		return res
 			.status(200)
