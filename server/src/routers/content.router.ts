@@ -3,6 +3,7 @@ import {
 	createContent,
 	deleteContent,
 	getAllContents,
+	getContentFromLink,
 	getContentsOfAUser,
 } from "../controllers/content.controller.js";
 import authUser from "../middlewares/userAuth.middleware.js";
@@ -14,10 +15,10 @@ const app = Router();
 app.post("/", authUser, createContent);
 app.delete("/", authUser, deleteContent);
 app.get("/", authUser, getContentsOfAUser);
-app.get("/all",authAdmin, getAllContents);
+app.get("/all", authAdmin, getAllContents);
+
+app.get("/brain/:id", authUser, getContentFromLink);
 
 export default app;
-
-
 
 // create one should only check if the title already is unique their contents

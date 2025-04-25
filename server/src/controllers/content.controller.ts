@@ -18,8 +18,7 @@ export const createContent = asyncHandler(
 
 		const userId = user._id;
 		const { type, title, tags, share, description } = req.body;
-		const link = `http://localhost:8002/v1/brain/` + nanoid(10);
-		console.log("nanoid link : ", link);
+		const link = `http://localhost:8002/api/v1/content/brain/` + nanoid(10);
 
 		const checkIfTitleExists = await ContentModel.findOne({
 			title,
@@ -57,7 +56,6 @@ export const createContent = asyncHandler(
 			share,
 			description,
 		};
-		console.log("payload : ", payload);
 		const validate = contentSchema.safeParse(payload);
 		if (!validate.success) {
 			return next(
@@ -142,5 +140,26 @@ export const getAllContents = asyncHandler(
 			.json(
 				new ApiResponse(200, true, "contents fetched successfully", allContents)
 			);
+	}
+);
+
+// /api/v1/content/brain/:id
+export const getContentFromLink = asyncHandler(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const id = req.params.id;
+
+		const link = `http://localhost:8002/api/v1/content/brain/` + id;
+		const content = await ContentModel.findOne({ link }).select(
+			"-userId -_id -link"
+		);
+		if (!content) {
+			return res.status(404).json(new ApiError("Content not found", 404));
+		}
+		if (content.share !== "public") {
+			return res.status(401).json(new ApiError("Content is private", 401));
+		}
+		res
+			.status(200)
+			.json(new ApiResponse(200, true, "content is accessible", content));
 	}
 );

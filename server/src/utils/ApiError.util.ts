@@ -16,3 +16,5 @@ class ApiError extends Error {
 }
 
 export default ApiError;
+
+// TODO: the object from apierror does nto contains message field in the response body.
